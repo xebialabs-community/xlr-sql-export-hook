@@ -59,11 +59,11 @@ class NamedPreparedStatement(object):
 
 class ReleaseSqlPublisher(object):
 
-    ISO_DATE_TIME_FORMAT = ISODateTimeFormat.dateTime()
-    RELEASE_PREP_STATEMENT = "INSERT INTO `release` (id, type, templateId, title, owner, description, status, createdFromTrigger, scheduledStartDate, dueDate, startDate,endDate, duration_days, duration_hours, duration_minutes) VALUES (:id, :type, :templateId, :title, :owner, :description, :status, :createdFromTrigger, :scheduledStartDate, :dueDate, :startDate, :endDate, :duration_days, :duration_hours, :duration_minutes)"
-    PHASE_PREP_STATEMENT = "INSERT INTO `phase` (id, type, releaseId, templateId, title, owner, description, status, scheduledStartDate, dueDate, startDate, endDate, duration_days, duration_hours, duration_minutes) VALUES (:id, :type, :releaseId, :templateId, :title, :owner, :description, :status, :scheduledStartDate, :dueDate, :startDate, :endDate, :duration_days, :duration_hours, :duration_minutes)"
-    TASK_PREP_STATEMENT = "INSERT INTO `task` (id, type, releaseId, phaseId, templateId, title, owner, description, status, automated, scheduledStartDate, dueDate, startDate, endDate, duration_days, duration_hours, duration_minutes) VALUES (:id, :type, :releaseId, :phaseId, :templateId, :title, :owner, :description, :status, :automated, :scheduledStartDate, :dueDate, :startDate, :endDate, :duration_days, :duration_hours, :duration_minutes)"
-    TEAMS_PREP_STATEMENT = "INSERT INTO `teams` (id, type, releaseId, templateId, teamName, permissions, members) VALUES (:id ,:type, :releaseId, :templateId, :teamName, :permissions, :members)"
+    ISO_DATE_TIME_FORMAT = ISODateTimeFormat.dateTimeParser()
+    RELEASE_PREP_STATEMENT = "INSERT INTO `release` (releaseId, releaseType, templateId, releaseTitle, releaseOwner, releaseDescription, releaseStatus, createdFromTrigger, releaseScheduledStartDate, releaseDueDate, releaseStartDate, releaseEndDate, releaseDurationSeconds) VALUES (:id, :type, :templateId, :title, :owner, :description, :status, :createdFromTrigger, :scheduledStartDate, :dueDate, :startDate, :endDate, :durationSeconds)"
+    PHASE_PREP_STATEMENT = "INSERT INTO `phase` (phaseId, phaseType, releaseId, templateId, phaseTitle, phaseDescription, phaseStatus, phaseScheduledStartDate, phaseDueDate, phaseStartDate, phaseEndDate, phaseDurationSeconds) VALUES (:id, :type, :releaseId, :templateId, :title, :description, :status, :scheduledStartDate, :dueDate, :startDate, :endDate, :durationSeconds)"
+    TASK_PREP_STATEMENT = "INSERT INTO `task` (taskId, taskType, releaseId, phaseId, templateId, taskTitle, taskOwner, taskDescription, taskStatus, automated, taskScheduledStartDate, taskDueDate, taskStartDate, taskEndDate, taskDurationSeconds) VALUES (:id, :type, :releaseId, :phaseId, :templateId, :title, :owner, :description, :status, :automated, :scheduledStartDate, :dueDate, :startDate, :endDate, :durationSeconds)"
+    TEAM_PREP_STATEMENT = "INSERT INTO `team` (teamId, teamType, releaseId, templateId, teamName, permissions, members) VALUES (:id ,:type, :releaseId, :templateId, :teamName, :permissions, :members)"
 
     def __init__(self, release, db_url, username, password, jdbc_driver):
         self.jdbc_driver = jdbc_driver
@@ -75,21 +75,13 @@ class ReleaseSqlPublisher(object):
         wrapped_release = self.wrap_dict_as_obj(release)
         self.release = wrapped_release
         self.release_id = self.convert_id(wrapped_release.id)
-        if hasattr(release, "originTemplateId") and release.originTemplateId is not None:
+        if "originTemplateId" in release and release['originTemplateId'] is not None:
             self.template_id = self.convert_id(wrapped_release.originTemplateId)
         else:
-            self.template_id = "Unknown"
+            self.template_id = "No Template"
 
     def _named_prepare_statement(self, statement):
         return NamedPreparedStatement(self._conn, statement)
-
-    def copy_meta(self, ci, target):
-        # attrs = ci.get$ciAttributes()
-        # target["createdBy"] = attrs.createdBy
-        # target["createdAt"] = self.convert_date(attrs.createdAt)
-        # target["lastModifiedBy"] = attrs.lastModifiedBy
-        # target["lastModifiedAt"] = self.convert_date(attrs.lastModifiedAt)
-        pass
 
     def convert_date(self, d):
         if d is not None:
@@ -127,9 +119,7 @@ class ReleaseSqlPublisher(object):
 
     def create_duration_fields(self, target, start_date, end_date):
         period = Duration(DateTime(start_date).getMillis(), DateTime(end_date).getMillis())
-        target.setInt("duration_days", period.toStandardDays().getDays())
-        target.setInt("duration_hours", period.toStandardHours().getHours())
-        target.setInt("duration_minutes", period.toStandardMinutes().getMinutes())
+        target.setInt("durationSeconds", period.getStandardSeconds())
 
     def copy_dates(self, ci, target):
         if hasattr(ci, "scheduledStartDate"):
@@ -146,10 +136,11 @@ class ReleaseSqlPublisher(object):
 
     def copy_common(self, ci, target):
         target.setString("title", ci.title)
-        if hasattr(ci, "owner"):
-            target.setString("owner", ci.owner)
-        else:
-            target.setString("owner", "")
+        if ci.type != "xlrelease.Phase":
+            if hasattr(ci, "owner"):
+                target.setString("owner", ci.owner)
+            else:
+                target.setString("owner", "")
         if hasattr(ci, "description"):
             target.setString("description", ci.description)
         else:
@@ -161,7 +152,7 @@ class ReleaseSqlPublisher(object):
             return
         for t in teams:
             t = self.wrap_dict_as_obj(t)
-            target = self.create_base(t, ReleaseSqlPublisher.TEAMS_PREP_STATEMENT)
+            target = self.create_base(t, ReleaseSqlPublisher.TEAM_PREP_STATEMENT)
             target.setString('teamName', t.teamName)
             target.setString('members', t.members)
             target.setString('permissions', t.permissions)
@@ -211,6 +202,4 @@ class ReleaseSqlPublisher(object):
         try:
             self.publish_release()
         except Exception as e:
-            #print e
-            #print "Unexpected error:", sys.exc_info()[0]
             raise e

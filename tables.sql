@@ -1,80 +1,87 @@
 use export_test;
 
 CREATE TABLE `phase` (
-  `id` varchar(100) NOT NULL,
-  `type` varchar(100) NOT NULL,
+  `phaseId` varchar(100) NOT NULL,
+  `phaseType` varchar(100) NOT NULL,
   `releaseId` varchar(100) NOT NULL,
   `templateId` varchar(100) NOT NULL,
-  `title` varchar(200) NOT NULL,
-  `owner` varchar(45) DEFAULT NULL,
-  `description` varchar(4000) DEFAULT NULL,
-  `status` varchar(20) NOT NULL,
-  `scheduledStartDate` datetime DEFAULT NULL,
-  `dueDate` datetime DEFAULT NULL,
-  `startDate` datetime NOT NULL,
-  `endDate` datetime NOT NULL,
-  `duration_seconds` int(11) NOT NULL DEFAULT '0',
-  `duration_hours` int(11) NOT NULL DEFAULT '0',
-  `duration_minutes` varchar(45) DEFAULT '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`),
-  KEY `start_date_idx` (`startDate`)
+  `phaseTitle` varchar(200) NOT NULL,
+  `phaseDescription` varchar(4000) DEFAULT NULL,
+  `phaseStatus` varchar(20) NOT NULL,
+  `phaseScheduledStartDate` datetime DEFAULT NULL,
+  `phaseDueDate` datetime DEFAULT NULL,
+  `phaseStartDate` datetime NOT NULL,
+  `phaseEndDate` datetime NOT NULL,
+  `phaseDurationSeconds` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`phaseId`),
+  UNIQUE KEY `id_UNIQUE` (`phaseId`),
+  KEY `start_date_idx` (`phaseStartDate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `release` (
-  `id` varchar(100) NOT NULL,
-  `type` varchar(100) NOT NULL,
+  `releaseId` varchar(100) NOT NULL,
+  `releaseType` varchar(100) NOT NULL,
   `templateId` varchar(100) NOT NULL,
-  `title` varchar(200) NOT NULL,
-  `owner` varchar(45) DEFAULT NULL,
-  `description` varchar(4000) DEFAULT NULL,
-  `status` varchar(20) NOT NULL,
+  `releaseTitle` varchar(200) NOT NULL,
+  `releaseOwner` varchar(45) DEFAULT NULL,
+  `releaseDescription` varchar(4000) DEFAULT NULL,
+  `releaseStatus` varchar(20) NOT NULL,
   `createdFromTrigger` tinyint(1) DEFAULT NULL,
-  `scheduledStartDate` datetime DEFAULT NULL,
-  `dueDate` datetime DEFAULT NULL,
-  `startDate` datetime NOT NULL,
-  `endDate` datetime NOT NULL,
-  `duration_days` int(11) NOT NULL DEFAULT '0',
-  `duration_hours` int(11) NOT NULL DEFAULT '0',
-  `duration_minutes` varchar(45) DEFAULT '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`),
-  KEY `start_date_idx` (`startDate`)
+  `releaseScheduledStartDate` datetime DEFAULT NULL,
+  `releaseDueDate` datetime DEFAULT NULL,
+  `releaseStartDate` datetime NOT NULL,
+  `releaseEndDate` datetime NOT NULL,
+  `releaseDurationSeconds` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`releaseId`),
+  UNIQUE KEY `id_UNIQUE` (`releaseId`),
+  KEY `start_date_idx` (`releaseStartDate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `task` (
-  `id` varchar(100) NOT NULL,
-  `type` varchar(100) NOT NULL,
+  `taskId` varchar(100) NOT NULL,
+  `taskType` varchar(100) NOT NULL,
   `releaseId` varchar(100) NOT NULL,
   `phaseId` varchar(100) NOT NULL,
   `templateId` varchar(100) NOT NULL,
-  `title` varchar(200) NOT NULL,
-  `owner` varchar(45) DEFAULT NULL,
-  `description` varchar(4000) DEFAULT NULL,
-  `status` varchar(20) NOT NULL,
+  `taskTitle` varchar(200) NOT NULL,
+  `taskOwner` varchar(45) DEFAULT NULL,
+  `taskDescription` varchar(4000) DEFAULT NULL,
+  `taskStatus` varchar(20) NOT NULL,
   `automated` tinyint(1) DEFAULT NULL,
-  `scheduledStartDate` datetime DEFAULT NULL,
-  `dueDate` datetime DEFAULT NULL,
-  `startDate` datetime NOT NULL,
-  `endDate` datetime NOT NULL,
-  `duration_days` int(11) NOT NULL DEFAULT '0',
-  `duration_hours` int(11) NOT NULL DEFAULT '0',
-  `duration_minutes` varchar(45) DEFAULT '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`),
-  KEY `start_date_idx` (`startDate`)
+  `taskScheduledStartDate` datetime DEFAULT NULL,
+  `taskDueDate` datetime DEFAULT NULL,
+  `taskStartDate` datetime NOT NULL,
+  `taskEndDate` datetime NOT NULL,
+  `taskDurationSeconds` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`taskId`),
+  UNIQUE KEY `id_UNIQUE` (`taskId`),
+  KEY `start_date_idx` (`taskStartDate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `teams` (
-  `id` varchar(100) NOT NULL,
-  `type` varchar(100) NOT NULL,
+CREATE TABLE `team` (
+  `teamId` varchar(100) NOT NULL,
+  `teamType` varchar(100) NOT NULL,
   `releaseId` varchar(100) NOT NULL,
   `templateId` varchar(100) NOT NULL,
   `teamName` varchar(200) NOT NULL,
   `permissions` varchar(200) DEFAULT NULL,
   `members` varchar(200) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
+  PRIMARY KEY (`teamId`),
+  UNIQUE KEY `id_UNIQUE` (`teamId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `permission` (
+  `permissionId` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(30) NOT NULL,
+  PRIMARY KEY (`permissionId`),
+  UNIQUE KEY `permission_id_idx` (`permissionId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `teamPermissions` (
+  `teamId` varchar(100) NOT NULL,
+  `permissionId` int(11) NOT NULL,
+  KEY `team_id_idx` (`teamId`),
+  KEY `permission_id_idx` (`permissionId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 commit;
