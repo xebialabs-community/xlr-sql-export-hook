@@ -63,7 +63,13 @@ class ReleaseSqlPublisher(object):
     RELEASE_PREP_STATEMENT = "INSERT INTO `release` (releaseId, releaseType, templateId, releaseTitle, releaseOwner, releaseDescription, releaseStatus, createdFromTrigger, releaseScheduledStartDate, releaseDueDate, releaseStartDate, releaseEndDate, releaseDurationSeconds) VALUES (:id, :type, :templateId, :title, :owner, :description, :status, :createdFromTrigger, :scheduledStartDate, :dueDate, :startDate, :endDate, :durationSeconds)"
     PHASE_PREP_STATEMENT = "INSERT INTO `phase` (phaseId, phaseType, releaseId, templateId, phaseTitle, phaseDescription, phaseStatus, phaseScheduledStartDate, phaseDueDate, phaseStartDate, phaseEndDate, phaseDurationSeconds) VALUES (:id, :type, :releaseId, :templateId, :title, :description, :status, :scheduledStartDate, :dueDate, :startDate, :endDate, :durationSeconds)"
     TASK_PREP_STATEMENT = "INSERT INTO `task` (taskId, taskType, releaseId, phaseId, templateId, taskTitle, taskOwner, taskDescription, taskStatus, automated, taskScheduledStartDate, taskDueDate, taskStartDate, taskEndDate, taskDurationSeconds) VALUES (:id, :type, :releaseId, :phaseId, :templateId, :title, :owner, :description, :status, :automated, :scheduledStartDate, :dueDate, :startDate, :endDate, :durationSeconds)"
-    TEAM_PREP_STATEMENT = "INSERT INTO `team` (teamId, teamType, releaseId, templateId, teamName, permissions, members) VALUES (:id ,:type, :releaseId, :templateId, :teamName, :permissions, :members)"
+    TEAM_PREP_STATEMENT = "INSERT INTO `team` (teamId, teamType, releaseId, templateId, teamName, members) VALUES (:id ,:type, :releaseId, :templateId, :teamName, :members)"
+    PERMISSION_PREP_STATEMENT = "INSERT IGNORE INTO `permission` SET `permissionName` = :name"
+    TEAM_PERM_PREP_STATEMENT = "INSERT INTO `teamToPermissions` (teamId, permissionId) SELECT :id, permissionId FROM permission WHERE permissionName = :permName"
+    TEAM_MEMBER_PREP_STATEMENT = "INSERT IGNORE INTO `teamMember` SET `memberName` = :name"
+    TEAM_TO_MEMBER_PREP_STATEMENT = "INSERT INTO `teamToTeamMembers` (teamId, teamMemberId) SELECT :id, teamMemberId FROM teamMember WHERE memberName = :memberName"
+
+
 
     def __init__(self, release, db_url, username, password, jdbc_driver):
         self.jdbc_driver = jdbc_driver
@@ -155,8 +161,36 @@ class ReleaseSqlPublisher(object):
             target = self.create_base(t, ReleaseSqlPublisher.TEAM_PREP_STATEMENT)
             target.setString('teamName', t.teamName)
             target.setString('members', t.members)
-            target.setString('permissions', t.permissions)
+            teamId = self.convert_id(t.id)
+            self.publish_team_members(t.members, teamId)
+            self.publish_permission(t.permissions, teamId)
             self.execute_statement(target)
+
+    def publish_team_members(self, teamMembers, teamId):
+        for member in teamMembers:
+            st = self._named_prepare_statement(ReleaseSqlPublisher.TEAM_MEMBER_PREP_STATEMENT)
+            st.setString("name", member)
+            self.execute_statement(st)
+            self.link_teamt_to_team_member(teamId, member)
+
+    def link_teamt_to_team_member(self, teamId, member):
+        st = self._named_prepare_statement(ReleaseSqlPublisher.TEAM_TO_MEMBER_PREP_STATEMENT)
+        st.setString("id", teamId)
+        st.setString("memberName", member)
+        self.execute_statement(st)
+
+    def publish_permission(self, permissions, teamId):
+        for perm in permissions:
+            st = self._named_prepare_statement(ReleaseSqlPublisher.PERMISSION_PREP_STATEMENT)
+            st.setString("name", perm)
+            self.execute_statement(st)
+            self.link_team_to_perm(teamId, perm)
+
+    def link_team_to_perm(self, teamId, permName):
+        st = self._named_prepare_statement(ReleaseSqlPublisher.TEAM_PERM_PREP_STATEMENT)
+        st.setString("id", teamId)
+        st.setString("permName", permName)
+        self.execute_statement(st)
 
     def publish_tasks(self, tasks, phase_id):
         for t in tasks:

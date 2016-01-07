@@ -1,5 +1,3 @@
-use export_test;
-
 CREATE TABLE `phase` (
   `phaseId` varchar(100) NOT NULL,
   `phaseType` varchar(100) NOT NULL,
@@ -14,7 +12,6 @@ CREATE TABLE `phase` (
   `phaseEndDate` datetime NOT NULL,
   `phaseDurationSeconds` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`phaseId`),
-  UNIQUE KEY `id_UNIQUE` (`phaseId`),
   KEY `start_date_idx` (`phaseStartDate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -33,7 +30,6 @@ CREATE TABLE `release` (
   `releaseEndDate` datetime NOT NULL,
   `releaseDurationSeconds` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`releaseId`),
-  UNIQUE KEY `id_UNIQUE` (`releaseId`),
   KEY `start_date_idx` (`releaseStartDate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -54,7 +50,6 @@ CREATE TABLE `task` (
   `taskEndDate` datetime NOT NULL,
   `taskDurationSeconds` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`taskId`),
-  UNIQUE KEY `id_UNIQUE` (`taskId`),
   KEY `start_date_idx` (`taskStartDate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -64,24 +59,39 @@ CREATE TABLE `team` (
   `releaseId` varchar(100) NOT NULL,
   `templateId` varchar(100) NOT NULL,
   `teamName` varchar(200) NOT NULL,
-  `permissions` varchar(200) DEFAULT NULL,
   `members` varchar(200) DEFAULT NULL,
-  PRIMARY KEY (`teamId`),
-  UNIQUE KEY `id_UNIQUE` (`teamId`)
+  PRIMARY KEY (`teamId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `permission` (
   `permissionId` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(30) NOT NULL,
+  `permissionName` varchar(30) NOT NULL,
   PRIMARY KEY (`permissionId`),
-  UNIQUE KEY `permission_id_idx` (`permissionId`)
+  UNIQUE KEY `name_idx` (`permissionName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `teamPermissions` (
+CREATE TABLE `teamToPermissions` (
   `teamId` varchar(100) NOT NULL,
   `permissionId` int(11) NOT NULL,
-  KEY `team_id_idx` (`teamId`),
-  KEY `permission_id_idx` (`permissionId`)
+  PRIMARY KEY (`teamId`, `permissionId`),
+  KEY `team_perm_idx` (`teamId`, `permissionId`),
+  KEY `perm_team_idx` (`permissionId`, `teamId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `teamMember` (
+  `teamMemberId` int(11) NOT NULL AUTO_INCREMENT,
+  `memberName` varchar(100) NOT NULL,
+  PRIMARY KEY (`teamMemberId`),
+  UNIQUE KEY `name_idx` (`memberName`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `teamToTeamMembers` (
+  `teamId` varchar(100) NOT NULL,
+  `teamMemberId` int(11) NOT NULL,
+  PRIMARY KEY (`teamId`, `teamMemberId`),
+  KEY `team_member_idx` (`teamId`, `teamMemberId`),
+  KEY `member_team_idx` (`teamMemberId`, `teamId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 commit;
