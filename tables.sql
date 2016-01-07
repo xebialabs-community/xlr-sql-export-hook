@@ -93,5 +93,4 @@ CREATE TABLE `teamToTeamMembers` (
   KEY `member_team_idx` (`teamMemberId`, `teamId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
 commit;

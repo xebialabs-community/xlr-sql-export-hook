@@ -8,4 +8,11 @@
 -->
 <synthetic xsi:schemaLocation="http://www.xebialabs.com/deployit/synthetic synthetic.xsd" xmlns="http://www.xebialabs.com/deployit/synthetic" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
+    <type type="export.SqlExportHook" extends="xlrelease.ExportHook">
+        <property name="jdbcUrl" label="JDBC url to database"/>
+        <property name="username" />
+        <property name="password" password="true" />
+        <property name="jdbcDriver"/>
+    </type>
+
 </synthetic>
