@@ -43,7 +43,7 @@ class NamedPreparedStatement(object):
         index = self._token_index(name)
         if isinstance(val, list):
             val = ','.join(val)
-        self._prepared_statement.setString(index+1, str(val))
+        self._prepared_statement.setString(index+1, val)
 
     def setBoolean(self, name, val):
         index = self._token_index(name)
