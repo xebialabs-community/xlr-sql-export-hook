@@ -11,6 +11,7 @@ Tested with MySQL 5.6
 
 ## Setup
 
+0. Make sure that your database server uses UTF-8 as default encoding otherwise, check this [link](http://stackoverflow.com/questions/3513773/change-mysql-default-character-set-to-utf-8-in-my-cnf)
 1. Set up database schema with `mysql -u<user> -p<password> -D <database> < ./tables.sql`
 2. clone repository and launch gradle build that assebles the jar: `./gradlew clean build`
 3. copy newly build jar file: `cp ./build/libs/xlr-sql-export-hook-1.0.0.jar <XLRELEASE_SERVER_HOME>/plugins`
