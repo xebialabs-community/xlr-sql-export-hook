@@ -1,4 +1,4 @@
-CREATE TABLE `phase` (
+CREATE TABLE `xlr_phase` (
   `phaseId` varchar(100) NOT NULL,
   `phaseType` varchar(100) NOT NULL,
   `releaseId` varchar(100) NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE `phase` (
   KEY `start_date_idx` (`phaseStartDate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `release` (
+CREATE TABLE `xlr_release` (
   `releaseId` varchar(100) NOT NULL,
   `releaseType` varchar(100) NOT NULL,
   `templateId` varchar(100) NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE `release` (
   KEY `start_date_idx` (`releaseStartDate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `task` (
+CREATE TABLE `xlr_task` (
   `taskId` varchar(100) NOT NULL,
   `taskType` varchar(100) NOT NULL,
   `releaseId` varchar(100) NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE `task` (
   KEY `start_date_idx` (`taskStartDate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `team` (
+CREATE TABLE `xlr_team` (
   `teamId` varchar(100) NOT NULL,
   `teamType` varchar(100) NOT NULL,
   `releaseId` varchar(100) NOT NULL,
@@ -63,14 +63,14 @@ CREATE TABLE `team` (
   PRIMARY KEY (`teamId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `permission` (
+CREATE TABLE `xlr_permission` (
   `permissionId` int(11) NOT NULL AUTO_INCREMENT,
   `permissionName` varchar(30) NOT NULL,
   PRIMARY KEY (`permissionId`),
   UNIQUE KEY `name_idx` (`permissionName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `teamToPermissions` (
+CREATE TABLE `xlr_teamToPermissions` (
   `teamId` varchar(100) NOT NULL,
   `permissionId` int(11) NOT NULL,
   PRIMARY KEY (`teamId`, `permissionId`),
@@ -78,14 +78,14 @@ CREATE TABLE `teamToPermissions` (
   KEY `perm_team_idx` (`permissionId`, `teamId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `teamMember` (
+CREATE TABLE `xlr_teamMember` (
   `teamMemberId` int(11) NOT NULL AUTO_INCREMENT,
   `memberName` varchar(100) NOT NULL,
   PRIMARY KEY (`teamMemberId`),
   UNIQUE KEY `name_idx` (`memberName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `teamToTeamMembers` (
+CREATE TABLE `xlr_teamToTeamMembers` (
   `teamId` varchar(100) NOT NULL,
   `teamMemberId` int(11) NOT NULL,
   PRIMARY KEY (`teamId`, `teamMemberId`),

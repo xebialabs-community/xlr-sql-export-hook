@@ -66,14 +66,14 @@ class NamedPreparedStatement(object):
 class ReleaseSqlPublisher(object):
 
     ISO_DATE_TIME_FORMAT = ISODateTimeFormat.dateTimeParser()
-    RELEASE_PREP_STATEMENT = "INSERT INTO `release` (releaseId, releaseType, templateId, releaseTitle, releaseOwner, releaseDescription, releaseStatus, createdFromTrigger, releaseScheduledStartDate, releaseDueDate, releaseStartDate, releaseEndDate, releaseDurationSeconds) VALUES (:id, :type, :templateId, :title, :owner, :description, :status, :createdFromTrigger, :scheduledStartDate, :dueDate, :startDate, :endDate, :durationSeconds)"
-    PHASE_PREP_STATEMENT = "INSERT INTO `phase` (phaseId, phaseType, releaseId, templateId, phaseTitle, phaseDescription, phaseStatus, phaseScheduledStartDate, phaseDueDate, phaseStartDate, phaseEndDate, phaseDurationSeconds) VALUES (:id, :type, :releaseId, :templateId, :title, :description, :status, :scheduledStartDate, :dueDate, :startDate, :endDate, :durationSeconds)"
-    TASK_PREP_STATEMENT = "INSERT INTO `task` (taskId, taskType, releaseId, phaseId, templateId, taskTitle, taskOwner, taskDescription, taskStatus, automated, taskScheduledStartDate, taskDueDate, taskStartDate, taskEndDate, taskDurationSeconds) VALUES (:id, :type, :releaseId, :phaseId, :templateId, :title, :owner, :description, :status, :automated, :scheduledStartDate, :dueDate, :startDate, :endDate, :durationSeconds)"
-    TEAM_PREP_STATEMENT = "INSERT INTO `team` (teamId, teamType, releaseId, templateId, teamName, members) VALUES (:id ,:type, :releaseId, :templateId, :teamName, :members)"
-    PERMISSION_PREP_STATEMENT = "INSERT IGNORE INTO `permission` SET `permissionName` = :name"
-    TEAM_PERM_PREP_STATEMENT = "INSERT INTO `teamToPermissions` (teamId, permissionId) SELECT :id, permissionId FROM permission WHERE permissionName = :permName"
-    TEAM_MEMBER_PREP_STATEMENT = "INSERT IGNORE INTO `teamMember` SET `memberName` = :name"
-    TEAM_TO_MEMBER_PREP_STATEMENT = "INSERT INTO `teamToTeamMembers` (teamId, teamMemberId) SELECT :id, teamMemberId FROM teamMember WHERE memberName = :memberName"
+    RELEASE_PREP_STATEMENT = "INSERT INTO `xlr_release` (releaseId, releaseType, templateId, releaseTitle, releaseOwner, releaseDescription, releaseStatus, createdFromTrigger, releaseScheduledStartDate, releaseDueDate, releaseStartDate, releaseEndDate, releaseDurationSeconds) VALUES (:id, :type, :templateId, :title, :owner, :description, :status, :createdFromTrigger, :scheduledStartDate, :dueDate, :startDate, :endDate, :durationSeconds)"
+    PHASE_PREP_STATEMENT = "INSERT INTO `xlr_phase` (phaseId, phaseType, releaseId, templateId, phaseTitle, phaseDescription, phaseStatus, phaseScheduledStartDate, phaseDueDate, phaseStartDate, phaseEndDate, phaseDurationSeconds) VALUES (:id, :type, :releaseId, :templateId, :title, :description, :status, :scheduledStartDate, :dueDate, :startDate, :endDate, :durationSeconds)"
+    TASK_PREP_STATEMENT = "INSERT INTO `xlr_task` (taskId, taskType, releaseId, phaseId, templateId, taskTitle, taskOwner, taskDescription, taskStatus, automated, taskScheduledStartDate, taskDueDate, taskStartDate, taskEndDate, taskDurationSeconds) VALUES (:id, :type, :releaseId, :phaseId, :templateId, :title, :owner, :description, :status, :automated, :scheduledStartDate, :dueDate, :startDate, :endDate, :durationSeconds)"
+    TEAM_PREP_STATEMENT = "INSERT INTO `xlr_team` (teamId, teamType, releaseId, templateId, teamName, members) VALUES (:id ,:type, :releaseId, :templateId, :teamName, :members)"
+    PERMISSION_PREP_STATEMENT = "INSERT IGNORE INTO `xlr_permission` SET `permissionName` = :name"
+    TEAM_PERM_PREP_STATEMENT = "INSERT INTO `xlr_teamToPermissions` (teamId, permissionId) SELECT :id, permissionId FROM xlr_permission WHERE permissionName = :permName"
+    TEAM_MEMBER_PREP_STATEMENT = "INSERT IGNORE INTO `xlr_teamMember` SET `memberName` = :name"
+    TEAM_TO_MEMBER_PREP_STATEMENT = "INSERT INTO `xlr_teamToTeamMembers` (teamId, teamMemberId) SELECT :id, teamMemberId FROM xlr_teamMember WHERE memberName = :memberName"
 
 
 
