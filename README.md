@@ -1,5 +1,5 @@
 
-# XL Deploy Windows File plugin
+# XLR SQL Export Hook
 
 [![Build Status][xlr-sql-export-hook-travis-image]][xlr-sql-export-hook-travis-url]
 [![Codacy Badge][xlr-sql-export-hook-codacy-image] ][xlr-sql-export-hook-codacy-url]
