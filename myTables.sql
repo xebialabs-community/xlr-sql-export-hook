@@ -15,6 +15,23 @@ CREATE TABLE `xlr_phase` (
   KEY `start_date_idx` (`phaseStartDate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `xlr_variables` (
+    `releaseId` varchar(100) NOT NULL,
+    `variableId` varchar(100) NOT NULL,
+    `variableKey` varchar(20) NOT NULL,
+    `variableLable` varchar(100),
+    `variableDescription` varchar(100),
+    `variableType` varchar(40),
+    `variableValue` varchar(100),
+    PRIMARY KEY (`variableId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `xlr_tags` (
+   `releaseId` varchar(100) NOT NULL,
+   `tagName`   varchar(50) NOT NULL,
+   PRIMARY KEY (`releaseId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE `xlr_release` (
   `releaseId` varchar(100) NOT NULL,
   `releaseType` varchar(100) NOT NULL,
