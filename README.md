@@ -38,6 +38,7 @@ This export hook exports release data into sql database. It also exports phases,
 	* **MySQL** `mysql -u<user> -p<password> -D <database> < ./myTables.sql`
 	* **PostgreSQL** `psql <database> -U <user> -W <password> < ./pgTable.sql`
 2. Copy plugin JAR to plugins folder (`<XLRELEASE_SERVER_HOME>/plugins`)
+
 3. restart XL Release server
 4. in XL Release go to `Setting -> Configuration -> Add Sql export hook`. Fill in your username, password, JDBC url:
 	* **MySQL** 
